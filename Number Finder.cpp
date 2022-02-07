@@ -2,6 +2,7 @@
 Purpose:
 	This algorithm finds the largest possible combination of numbers in a list without header files.
 	If a number is selected, its immediate neighbors cannot be selected.
+	Zero means the point was not processed. One means the point was not selected. Two means the point was selected. 
 Solution:
 	This problem is solved by repeatedly dividing the dataset into alternating sequences and increasing the size of both until a sequence is selected.
 	A sequence is selected when it becomes larger than the other and is surrounded by the other sequence or reaches a predefined point.
