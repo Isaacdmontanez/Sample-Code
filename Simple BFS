@@ -1,0 +1,96 @@
+//Simple BFS
+//Assume a grid where the algorithm finds the shortest distance between the start and end point.
+//A "." indicates a point the DFS can traverse and an "X" indicates a point the DFS cannot traverse
+
+//INPUT:
+//n
+//n rows of grid[]
+//sx, sy, ex, ey
+//n = grid size
+//grid = list of n strings describing the grid the DFS needs to traverse
+//sx & sy = start points
+//ex & ey = end points
+
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <algorithm>
+#include <numeric>
+#include <sstream>
+#include <array>
+#include <stack>
+#include <cstring>
+#include <map>
+#include <bitset>
+#include <queue>
+//#include bits
+using namespace std;
+
+int a, b, counter = 0, cur = 0, ex, ey, found = 1, last = 1, n, possible = 0, sx, sy;
+string grid[1000];
+queue <int> qx;
+queue <int> qy;
+
+void search(){
+	//Searches each point until the exit is found or there are no remaining points
+	int x = qx.front();
+	int y = qy.front();
+	qx.pop();
+	qy.pop();
+	//Checks if the current point is the exit point
+	if(x == ex && y == ey){
+		cout<<"The starting point's distance from the end point is: "<<cur<<".\n";
+		possible = 1;
+		exit;
+	}
+	//Loads connected points
+	for(int i=0;i<4;i++){
+		switch (i){
+			case 0:
+				a = x + 1;
+				b = y;
+				break;
+			case 1:
+				a = x - 1;
+				b = y;
+				break;
+			case 2:
+				a = x;
+				b = y + 1;
+				break;
+			case 3:
+				a = x;
+				b = y - 1;
+				break;
+		}
+		//Queues connected points
+		if(a < n && a >= 0 && b < n && b >= 0){
+			if(grid[a].at(b) != 'X'){
+				grid[a].at(b) = 'X';
+				qx.push(a);
+				qy.push(b);
+				found++;
+			}
+		}
+	}
+	//Updates the distance from the start to exit
+	counter++;
+	if(last == counter){
+		cur++;
+		last = found;
+	}
+}
+
+int main(){
+	//Loads input and runs search()
+	cin>>n;
+	for(int i = 0 ; i < n; i++) cin>>grid[i];
+	cin>>sx>>sy>>ex>>ey;
+	if(grid[sx][sy] != 'X'){
+		qx.push(sx);
+		qy.push(sy);
+		grid[sx].at(sy) = 'X';
+		while(!qx.empty() && !possible) search();
+	}
+	if(possible == 0) cout<<"IMPOSSIBLE\n";
+}
