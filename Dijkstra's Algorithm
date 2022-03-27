@@ -1,0 +1,98 @@
+/*
+
+Dijkstra's Algorithm
+Finds the shortest distance from the start node to all connected nodes
+Unable to process negative edge weights
+
+INPUT:
+
+n k start
+k lines of: a b c
+l
+l lines of: node
+
+n = the total number of nodes in the graph numbered 0 to n-1
+k = the total number of edges in the graph
+start = the starting node from which the distance of all other nodes will be determined
+
+a = an edge's starting node
+b = an edge's ending node
+c = the cost to go from a to b
+
+l = the number of following node queries
+node = request for the distance from the starting node to the desired node
+
+SAMPLE INPUT:
+
+5 4 0
+2 1 4
+0 1 10
+1 3 3
+0 2 1
+6
+0 1 2 3 4 5
+
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+//Global Variables
+
+const int Max = 1000000; //IMPORTANT set the maximum desired array size
+int a[Max], b[Max], c[Max], cost[Max], dir[Max], in[3], k, l, ms, n, node, pos, start;
+string sorting[Max];
+stringstream sorted;
+multimap <int, int> q;
+
+//Functions
+
+void search(){
+	//Processes the point with the lowest cost until all points have the lowest possible cost
+	auto cur = q.begin();
+	ms = cur -> first;
+	pos = cur -> second;
+	if(ms <= cost[pos]){
+		//Inserts future nodes to be visitied into the multimap and updates cost
+		for (int i = dir[pos]; pos == a[i]; i++){
+			if(ms + c[i] < cost[b[i]]){
+				cost[b[i]] = ms + c[i];
+				q.insert({cost[b[i]], b[i]});
+			}
+		}
+	}
+	q.erase(q.find(ms));
+}
+
+int main(){
+	//Loads inputs
+	cin >> n >> k >> start;
+	q.insert({0, start});
+	memset(cost, 0x7f, sizeof(cost));
+	//Sorts edges
+	for(int i = 0; i < k; i++){
+		cin >> in[0] >> in[1] >> in[2];
+		sorting[i] = to_string(in[0]) + " " + to_string(in[2]) + " " + to_string(in[1]) + " ";
+	}
+	sort(sorting, sorting + k);
+	for(int i = 0; i < k; i++) sorted << sorting[i];
+	for(int i = 0; i < k; i++){
+		sorted >> a[i] >> c[i] >> b[i];
+		if(i != 0)
+			if(a[i] != a[i-1])
+				dir[a[i]] = i;
+	}
+	dir[a[0]] = 0;
+	//Processes graph, loads node queries, and outputs the distance from the start to end node
+	while(!q.empty()) search();
+	cost[start] = 0;
+	cin >> l;
+	for (int i = 0; i < l; i++){
+		cin >> node;
+		if (node < n){
+			if (cost[node] != 2139062143) cout << "It costs " << cost[node] << " to reach node " << node << " from the starting node.\n";
+			else cout << "Node " << node << " is not connected to the starting node.\n";
+		}
+		else cout << "Node " << node << " is not apart of this graph.\n";
+	}
+}
